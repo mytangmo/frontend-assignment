@@ -20,7 +20,7 @@ export function Header({ cartItemCount = 0, onSearch }: HeaderProps) {
   };
 
   return (
-    <header className="bg-white">
+    <header className="bg-white fixed w-screen z-100">
       {showPromotion && (
         <div className="relative flex min-h-9 items-center justify-center bg-black px-10 text-center text-xs text-white sm:text-sm">
           <p>
@@ -41,7 +41,7 @@ export function Header({ cartItemCount = 0, onSearch }: HeaderProps) {
         </div>
       )}
 
-      <div className="mx-auto max-w-[1240px] px-4">
+      <div className="mx-auto max-w-310 px-4">
         <nav
           className="flex h-20 items-center gap-3 border-b border-gray-200"
           aria-label="Main navigation"
