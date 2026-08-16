@@ -17,8 +17,6 @@ export default function OrderSummary({
   isCheckoutPending = false,
   onCheckout,
 }: OrderSummaryProps) {
-  const isEmpty = totalItems === 0;
-
   return (
     <section className="h-fit rounded-[20px]">
       <h2 className="text-xl font-bold md:text-2xl">Order Summary</h2>
@@ -51,7 +49,7 @@ export default function OrderSummary({
       <button
         type="button"
         className="h-12 w-full rounded-full bg-black text-sm font-medium text-white transition-colors hover:bg-black/80 disabled:cursor-not-allowed disabled:bg-black/30"
-        disabled={isEmpty || isCheckoutPending || !onCheckout}
+        disabled={isCheckoutPending || !onCheckout}
         onClick={onCheckout}
       >
         {isCheckoutPending ? "Checking out..." : "Go to Checkout"}

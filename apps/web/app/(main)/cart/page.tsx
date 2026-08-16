@@ -10,8 +10,10 @@ import {
   useUpdateCartItem,
 } from "@/features/hooks/useCart";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function CartScreen() {
+  const [checkoutError, setCheckoutError] = useState<string>();
   const router = useRouter();
   const { data: cart, isPending, error } = useCart();
 
@@ -20,11 +22,24 @@ export default function CartScreen() {
   const checkoutCart = useCheckoutCart();
 
   const handleCheckout = () => {
+    if (!cart || cart.totalItems === 0) {
+      setCheckoutError(
+        "Your cart is empty. Add at least one item before checkout.",
+      );
+      return;
+    }
+
+    setCheckoutError(undefined);
+
     checkoutCart.mutate(undefined, {
       onSuccess: (data) => {
         router.push(
           `/checkout/success?orderId=${encodeURIComponent(data.orderId)}`,
         );
+      },
+
+      onError: () => {
+        setCheckoutError("Unable to checkout. Please try again.");
       },
     });
   };
@@ -77,9 +92,9 @@ export default function CartScreen() {
           </p>
         )}
 
-        {checkoutCart.error && (
-          <p className="mb-4 text-sm text-red-500">
-            Unable to checkout. Please try again.
+        {checkoutError && (
+          <p role="alert" className="mb-4 text-sm text-red-500">
+            {checkoutError}
           </p>
         )}
 
