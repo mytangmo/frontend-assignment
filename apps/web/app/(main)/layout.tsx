@@ -1,4 +1,4 @@
-import { Header } from "@/_components/header/page";
+import { Header } from "@/_components/Header";
 
 export default function StorefrontLayout({
   children,

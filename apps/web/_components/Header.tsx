@@ -1,5 +1,6 @@
 "use client";
 
+import { useCart } from "@/features/hooks/useCart";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { FiMenu, FiSearch, FiShoppingCart, FiUser, FiX } from "react-icons/fi";
@@ -9,7 +10,10 @@ type HeaderProps = {
   onSearch?: (value: string) => void;
 };
 
-export function Header({ cartItemCount = 0, onSearch }: HeaderProps) {
+export function Header({ cartItemCount, onSearch }: HeaderProps) {
+  const { data: cart } = useCart();
+
+  const displayedCartItemCount = cartItemCount ?? cart?.totalItems ?? 0;
   const [search, setSearch] = useState("");
   const [showPromotion, setShowPromotion] = useState(true);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -98,14 +102,14 @@ export function Header({ cartItemCount = 0, onSearch }: HeaderProps) {
 
             <Link
               href="/cart"
-              aria-label={`Shopping cart with ${cartItemCount} items`}
+              aria-label={`Shopping cart with ${displayedCartItemCount} items`}
               className="relative grid size-10 place-items-center"
             >
               <FiShoppingCart size={22} aria-hidden="true" />
 
-              {cartItemCount > 0 && (
+              {displayedCartItemCount > 0 && (
                 <span className="absolute right-0 top-0 grid min-w-5 place-items-center rounded-full bg-black px-1 text-[10px] leading-5 text-white">
-                  {cartItemCount > 99 ? "99+" : cartItemCount}
+                  {displayedCartItemCount > 99 ? "99+" : displayedCartItemCount}
                 </span>
               )}
             </Link>

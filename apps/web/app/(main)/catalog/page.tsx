@@ -1,26 +1,42 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import type { ApplyFilterType, ProductDetailType } from "@/types/product.type";
+import { getAllColors } from "@/features/api/color";
+import { getAllSize } from "@/features/api/size";
 import { ProductCard } from "@/features/category/components/ProductCard";
 import FiltersPanel from "@/features/filters/components/FiltersPanel";
-import { getAllColors } from "@/features/api/color";
-import { ColorDetail } from "@/types/colors.type";
-import { getAllSize } from "@/features/api/size";
-import { SizeDetail } from "@/types/size.type";
 import { useInfiniteProducts } from "@/features/hooks/useInfiniteProduct";
 import { InfiniteScrollTrigger } from "@/features/category/components/InfiniteScrollTrigger";
+import {
+  useAddCartItem,
+  useCart,
+  useRemoveCartItem,
+  useUpdateCartItem,
+} from "@/features/hooks/useCart";
 
 export function CategoryPage() {
-  const [colors, setColors] = useState<ColorDetail[]>([]);
-  const [sizes, setSizes] = useState<SizeDetail[]>();
-  const [error, setError] = useState("");
   const [appliedFilters, setAppliedFilters] = useState<ApplyFilterType>({
     minPrice: 0,
     maxPrice: 300,
     colorIds: [],
     sizeIds: [],
+  });
+  const {
+    data: colors = [],
+    error: colorsError,
+  } = useQuery({
+    queryKey: ["colors"],
+    queryFn: getAllColors,
+  });
+  const {
+    data: sizes = [],
+    error: sizesError,
+  } = useQuery({
+    queryKey: ["sizes"],
+    queryFn: getAllSize,
   });
 
   const {
@@ -40,36 +56,10 @@ export function CategoryPage() {
     minPrice: appliedFilters.minPrice,
     maxPrice: appliedFilters.maxPrice,
   });
-
-  useEffect(() => {
-    let isActive = true;
-
-    async function loadFilterOptions() {
-      try {
-        setError("");
-
-        const [colorsResponse, sizesResponse] = await Promise.all([
-          getAllColors(),
-          getAllSize(),
-        ]);
-
-        if (isActive) {
-          setColors(colorsResponse);
-          setSizes(sizesResponse);
-        }
-      } catch {
-        if (isActive) {
-          setError("Unable to load filter options");
-        }
-      }
-    }
-
-    void loadFilterOptions();
-
-    return () => {
-      isActive = false;
-    };
-  }, []);
+  const { data: cart } = useCart();
+  const addCartItem = useAddCartItem();
+  const updateCartItem = useUpdateCartItem();
+  const removeCartItem = useRemoveCartItem();
 
   const handleLoadMore = () => {
     void fetchNextPage();
@@ -81,6 +71,9 @@ export function CategoryPage() {
 
   const products: ProductDetailType[] =
     data?.pages.flatMap((page) => page.items) ?? [];
+  const cartItemsByProductId = new Map(
+    (cart?.items ?? []).map((item) => [item.productId, item]),
+  );
 
   return (
     <>
@@ -95,11 +88,13 @@ export function CategoryPage() {
             </p>
           )}
 
-          {error && <p className="text-red-500">{error}</p>}
+          {(colorsError || sizesError) && (
+            <p className="text-red-500">Unable to load filter options</p>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-[295px_1fr] gap-4">
             <FiltersPanel
               colors={colors}
-              sizes={sizes ?? []}
+              sizes={sizes}
               value={appliedFilters}
               onApplyFilter={handleApplyFilter}
             />
@@ -108,11 +103,57 @@ export function CategoryPage() {
             )}
 
             {!isPending && !productsError && products.length > 0 && (
-              <>
+              <div>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-3">
-                  {products.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
+                  {products.map((product) => {
+                    const cartItem = cartItemsByProductId.get(product.id);
+
+                    const quantity = cartItem?.quantity ?? 0;
+
+                    const isUpdating =
+                      (addCartItem.isPending &&
+                        addCartItem.variables?.productId === product.id) ||
+                      (updateCartItem.isPending &&
+                        updateCartItem.variables?.itemId === cartItem?.id) ||
+                      (removeCartItem.isPending &&
+                        removeCartItem.variables === cartItem?.id);
+
+                    return (
+                      <ProductCard
+                        key={product.id}
+                        product={product}
+                        quantity={quantity}
+                        disabled={isUpdating}
+                        onAdd={() => {
+                          addCartItem.mutate({
+                            productId: product.id,
+                            quantity: 1,
+                          });
+                        }}
+                        onIncrease={() => {
+                          if (!cartItem) return;
+
+                          updateCartItem.mutate({
+                            itemId: cartItem.id,
+                            quantity: Math.min(cartItem.quantity + 1, 99),
+                          });
+                        }}
+                        onDecrease={() => {
+                          if (!cartItem) return;
+
+                          if (cartItem.quantity === 1) {
+                            removeCartItem.mutate(cartItem.id);
+                            return;
+                          }
+
+                          updateCartItem.mutate({
+                            itemId: cartItem.id,
+                            quantity: cartItem.quantity - 1,
+                          });
+                        }}
+                      />
+                    );
+                  })}
                 </div>
 
                 <InfiniteScrollTrigger
@@ -126,7 +167,7 @@ export function CategoryPage() {
                     You have reached the end.
                   </p>
                 )}
-              </>
+              </div>
             )}
           </div>
         </div>

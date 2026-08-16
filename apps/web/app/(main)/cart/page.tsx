@@ -1,0 +1,89 @@
+"use client";
+
+import CartList from "@/features/cart/components/CartList";
+import OrderSummary from "@/features/cart/components/OrderSummary";
+import {
+  useCart,
+  useRemoveCartItem,
+  useUpdateCartItem,
+} from "@/features/hooks/useCart";
+
+export default function CartScreen() {
+  const { data: cart, isPending, error } = useCart();
+
+  const updateCartItem = useUpdateCartItem();
+  const removeCartItem = useRemoveCartItem();
+
+  const handleQuantityChange = (itemId: string, quantity: number) => {
+    updateCartItem.mutate({
+      itemId,
+      quantity,
+    });
+  };
+
+  const handleRemove = (itemId: string) => {
+    removeCartItem.mutate(itemId);
+  };
+
+  const updatingItemId = updateCartItem.isPending
+    ? updateCartItem.variables?.itemId
+    : removeCartItem.isPending
+      ? removeCartItem.variables
+      : undefined;
+
+  if (isPending) {
+    return (
+      <main className="min-h-screen pt-40">
+        <p className="text-center">Loading cart...</p>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="min-h-screen pt-40">
+        <p className="text-center text-red-500">Unable to load cart.</p>
+      </main>
+    );
+  }
+
+  if (updateCartItem.error || removeCartItem.error) {
+    return (
+      <p className="mb-4 text-sm text-red-500">
+        Unable to update cart. Please try again.
+      </p>
+    );
+  }
+
+  return (
+    <main className="min-h-screen">
+      <div className="mx-auto max-w-310 px-4 pt-40">
+        <h1 className="mb-6 text-3xl font-bold">Your cart</h1>
+
+        {(updateCartItem.error || removeCartItem.error) && (
+          <p className="mb-4 text-sm text-red-500">
+            Unable to update cart. Please try again.
+          </p>
+        )}
+
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_420px]">
+          <CartList
+            items={cart?.items ?? []}
+            updatingItemId={updatingItemId}
+            onQuantityChange={handleQuantityChange}
+            onRemove={handleRemove}
+          />
+
+          <section className="rounded-[20px] border border-black/10 px-6 py-5 max-h-max">
+            <OrderSummary
+              totalItems={cart?.totalItems ?? 0}
+              subtotal={cart?.subtotal ?? 0}
+              totalDiscount={cart?.totalDiscount ?? 0}
+              total={cart?.total ?? 0}
+            />
+          </section>
+        </div>
+      </div>
+    </main>
+  );
+}

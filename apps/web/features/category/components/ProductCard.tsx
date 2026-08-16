@@ -1,5 +1,4 @@
 "use client";
-import React, { useState } from "react";
 
 import { ProductRating } from "./ProductRating";
 import ProductCardControl from "./ProductCardControl";
@@ -13,11 +12,22 @@ interface ProductCardProps {
     percentageDiscount: number;
     imageUrl: string;
   };
+  quantity?: number;
+  disabled?: boolean;
+  onAdd?: () => void;
+  onIncrease?: () => void;
+  onDecrease?: () => void;
 }
 
 export function ProductCard(props: ProductCardProps): React.ReactNode {
-  const [quantityValue, setQuantityValue] = useState<number>(0);
-  const { product } = props;
+  const {
+    product,
+    quantity = 0,
+    disabled = false,
+    onAdd,
+    onIncrease,
+    onDecrease,
+  } = props;
   const handleDisplayPrice = (value: number) => {
     if (!value) return;
     return `$${value}`;
@@ -40,12 +50,11 @@ export function ProductCard(props: ProductCardProps): React.ReactNode {
         >
           <div className="absolute bottom-3 right-3 lg:bottom-4 lg:right-4">
             <ProductCardControl
-              onAdd={() => setQuantityValue(1)}
-              onIncrease={() => setQuantityValue((value) => value + 1)}
-              onDecrease={() =>
-                setQuantityValue((value) => Math.max(0, value - 1))
-              }
-              quantity={quantityValue}
+              quantity={quantity}
+              disabled={disabled}
+              onAdd={onAdd}
+              onIncrease={onIncrease}
+              onDecrease={onDecrease}
             />
           </div>
         </div>
