@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import { Rating } from "../rating";
-import CardControlButton from "../button/cardControlButton";
+
+import { ProductRating } from "./ProductRating";
+import ProductCardControl from "./ProductCardControl";
 interface ProductCardProps {
   product: {
     id: string;
@@ -38,7 +39,7 @@ export function ProductCard(props: ProductCardProps): React.ReactNode {
           aria-label={product.name}
         >
           <div className="absolute bottom-3 right-3 lg:bottom-4 lg:right-4">
-            <CardControlButton
+            <ProductCardControl
               onAdd={() => setQuantityValue(1)}
               onIncrease={() => setQuantityValue((value) => value + 1)}
               onDecrease={() =>
@@ -53,7 +54,7 @@ export function ProductCard(props: ProductCardProps): React.ReactNode {
       <div className="min-h-0 pt-3 gap-1.5 flex flex-col">
         <h3 className="truncate text-xl font-bold">{product.name}</h3>
         <div className="mt-1 flex items-center gap-2">
-          <Rating rating={product.rating} />
+          <ProductRating rating={product.rating} />
         </div>
         <div className="gap-2.5 flex align-middle ">
           <div className="text-2xl font-bold">
@@ -61,7 +62,7 @@ export function ProductCard(props: ProductCardProps): React.ReactNode {
           </div>
           {!product.discountedPrice ||
           product.price === product.discountedPrice ? null : (
-            <div className="text-2xl font-bold text-[rgba(0,0,0,0.4)] line-through">
+            <div className="text-2xl font-bold text-[rgba(0,0,0,0.4)]">
               {handleDisplayPrice(product.price)}
             </div>
           )}

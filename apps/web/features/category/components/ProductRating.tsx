@@ -9,9 +9,12 @@ type RatingProps = {
   showValue?: boolean;
 };
 
-export function Rating({ rating, size = 18, showValue = true }: RatingProps) {
+export function ProductRating({
+  rating,
+  size = 18,
+  showValue = true,
+}: RatingProps) {
   const normalizedRating = Math.min(MAX_RATING, Math.max(0, rating));
-
   return (
     <div
       className="flex items-center gap-2"
