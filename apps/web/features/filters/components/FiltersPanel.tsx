@@ -61,7 +61,7 @@ export default function FilterPanel({
   };
 
   return (
-    <aside className="flex flex-col gap-6 rounded-[20px] border border-black/10 px-5 pb-6">
+    <aside className="flex flex-col gap-6 rounded-[20px] border border-black/10 px-5 pb-6 max-h-max">
       <div className="flex items-center justify-between border-b border-black/10 py-6">
         <h2 className="text-xl font-bold">Filters</h2>
         <FiSliders className="text-black/40" aria-hidden="true" />

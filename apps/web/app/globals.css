@@ -2,3 +2,9 @@
 @theme inline {
   --font-sans: var(--font-inter);
 }
+
+@keyframes loading-fade-in {
+  to {
+    opacity: 1;
+  }
+}

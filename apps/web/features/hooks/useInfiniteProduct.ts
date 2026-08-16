@@ -9,16 +9,27 @@ const PAGE_SIZE = 20;
 
 type InfiniteProductFilters = Omit<ProductFilters, "limit" | "offset">;
 
+const delay = (ms: number) =>
+  new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
 export function useInfiniteProducts(filters: InfiniteProductFilters) {
   return useInfiniteQuery({
     queryKey: ["products", filters],
 
-    queryFn: ({ pageParam }) =>
-      getProducts({
-        ...filters,
-        limit: PAGE_SIZE,
-        offset: pageParam,
-      }),
+    queryFn: async ({ pageParam }) => {
+      const [products] = await Promise.all([
+        getProducts({
+          ...filters,
+          limit: PAGE_SIZE,
+          offset: pageParam,
+        }),
+        delay(1000),
+      ]);
+
+      return products;
+    },
 
     initialPageParam: 0,
 

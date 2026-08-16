@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "@/_components/Loading";
 import CartList from "@/features/cart/components/CartList";
 import OrderSummary from "@/features/cart/components/OrderSummary";
 import {
@@ -33,8 +34,8 @@ export default function CartScreen() {
 
   if (isPending) {
     return (
-      <main className="min-h-screen pt-40">
-        <p className="text-center">Loading cart...</p>
+      <main className="relative min-h-screen">
+        <Loading label="Loading cart..." delayMs={0} />
       </main>
     );
   }

@@ -16,6 +16,7 @@ import {
   useRemoveCartItem,
   useUpdateCartItem,
 } from "@/features/hooks/useCart";
+import Loading from "@/_components/Loading";
 
 export function CategoryPage() {
   const [appliedFilters, setAppliedFilters] = useState<ApplyFilterType>({
@@ -27,6 +28,7 @@ export function CategoryPage() {
   const {
     data: colors = [],
     error: colorsError,
+    isPending: colorsPending,
   } = useQuery({
     queryKey: ["colors"],
     queryFn: getAllColors,
@@ -34,6 +36,7 @@ export function CategoryPage() {
   const {
     data: sizes = [],
     error: sizesError,
+    isPending: sizesPending,
   } = useQuery({
     queryKey: ["sizes"],
     queryFn: getAllSize,
@@ -74,14 +77,13 @@ export function CategoryPage() {
   const cartItemsByProductId = new Map(
     (cart?.items ?? []).map((item) => [item.productId, item]),
   );
+  const isPagePending = isPending || colorsPending || sizesPending;
 
   return (
     <>
-      <main className="min-h-screen">
+      <main className="relative min-h-screen">
         <div className="mx-auto flex md:w-full lg:max-w-310 justify-center px-4 pt-40">
-          {isPending && (
-            <p className="py-10 text-center">Loading products...</p>
-          )}
+          {isPagePending && <Loading label="Loading products..." delayMs={0} />}
           {productsError && (
             <p className="py-10 text-center text-red-500">
               Unable to load products
