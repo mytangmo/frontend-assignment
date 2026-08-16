@@ -16,19 +16,10 @@ import {
 
 export const CART_QUERY_KEY = ["cart"] as const;
 
-const delay = (ms: number) =>
-  new Promise<void>((resolve) => {
-    setTimeout(resolve, ms);
-  });
-
 export function useCart() {
   return useQuery({
     queryKey: CART_QUERY_KEY,
-    queryFn: async () => {
-      const [cart] = await Promise.all([getCart(), delay(1000)]);
-
-      return cart;
-    },
+    queryFn: getCart,
   });
 }
 

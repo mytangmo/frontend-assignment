@@ -158,19 +158,18 @@ export default function CategoryContent() {
                     />
                   );
                 })}
+                <InfiniteScrollTrigger
+                  hasMore={Boolean(hasNextPage)}
+                  isLoading={isFetchingNextPage}
+                  onLoadMore={handleLoadMore}
+                />
+
+                {!hasNextPage && (
+                  <p className="py-8 text-center text-sm text-black/50">
+                    You have reached the end.
+                  </p>
+                )}
               </div>
-
-              <InfiniteScrollTrigger
-                hasMore={Boolean(hasNextPage)}
-                isLoading={isFetchingNextPage}
-                onLoadMore={handleLoadMore}
-              />
-
-              {!hasNextPage && (
-                <p className="py-8 text-center text-sm text-black/50">
-                  You have reached the end.
-                </p>
-              )}
             </div>
           )}
         </div>
