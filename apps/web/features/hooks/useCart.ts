@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
   addCartItem,
+  checkoutCart,
   getCart,
   removeCartItem,
   updateCartItem,
@@ -66,6 +67,20 @@ export function useAddCartItem() {
   return useMutation({
     mutationFn: ({ productId, quantity = 1 }: AddCartItemVariables) =>
       addCartItem(productId, quantity),
+
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: CART_QUERY_KEY,
+      });
+    },
+  });
+}
+
+export function useCheckoutCart() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: checkoutCart,
 
     onSuccess: () => {
       void queryClient.invalidateQueries({

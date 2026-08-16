@@ -5,15 +5,29 @@ import CartList from "@/features/cart/components/CartList";
 import OrderSummary from "@/features/cart/components/OrderSummary";
 import {
   useCart,
+  useCheckoutCart,
   useRemoveCartItem,
   useUpdateCartItem,
 } from "@/features/hooks/useCart";
+import { useRouter } from "next/navigation";
 
 export default function CartScreen() {
+  const router = useRouter();
   const { data: cart, isPending, error } = useCart();
 
   const updateCartItem = useUpdateCartItem();
   const removeCartItem = useRemoveCartItem();
+  const checkoutCart = useCheckoutCart();
+
+  const handleCheckout = () => {
+    checkoutCart.mutate(undefined, {
+      onSuccess: (data) => {
+        router.push(
+          `/checkout/success?orderId=${encodeURIComponent(data.orderId)}`,
+        );
+      },
+    });
+  };
 
   const handleQuantityChange = (itemId: string, quantity: number) => {
     updateCartItem.mutate({
@@ -48,22 +62,24 @@ export default function CartScreen() {
     );
   }
 
-  if (updateCartItem.error || removeCartItem.error) {
-    return (
-      <p className="mb-4 text-sm text-red-500">
-        Unable to update cart. Please try again.
-      </p>
-    );
-  }
-
   return (
-    <main className="min-h-screen">
+    <main className="relative min-h-screen">
+      {checkoutCart.isPending && (
+        <Loading label="Processing checkout..." delayMs={0} />
+      )}
+
       <div className="mx-auto max-w-310 px-4 pt-40">
         <h1 className="mb-6 text-3xl font-bold">Your cart</h1>
 
         {(updateCartItem.error || removeCartItem.error) && (
           <p className="mb-4 text-sm text-red-500">
             Unable to update cart. Please try again.
+          </p>
+        )}
+
+        {checkoutCart.error && (
+          <p className="mb-4 text-sm text-red-500">
+            Unable to checkout. Please try again.
           </p>
         )}
 
@@ -81,6 +97,8 @@ export default function CartScreen() {
               subtotal={cart?.subtotal ?? 0}
               totalDiscount={cart?.totalDiscount ?? 0}
               total={cart?.total ?? 0}
+              isCheckoutPending={checkoutCart.isPending}
+              onCheckout={handleCheckout}
             />
           </section>
         </div>

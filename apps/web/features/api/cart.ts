@@ -44,3 +44,15 @@ export async function removeCartItem(itemId: string) {
 
   return data;
 }
+
+export async function checkoutCart() {
+  const { data, error } = await api.cart.checkout.post();
+
+  if (error) {
+    throw new Error("Unable to checkout cart");
+  }
+
+  return data;
+}
+
+
