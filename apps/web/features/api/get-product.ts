@@ -1,16 +1,5 @@
 import { api } from "@/lib/eden";
-
-export type ProductFilters = {
-  q?: string;
-  colorIds?: string[] | undefined;
-  sizeIds?: string[] | undefined;
-  minPrice?: number;
-  maxPrice?: number;
-  limit?: number;
-  offset?: number;
-  sort?: "name" | "price" | "rating" | "createdAt" | undefined;
-  order?: "asc" | "desc" | undefined;
-};
+import { ProductFilters } from "@/types/product.type";
 
 export async function getProducts(filters: ProductFilters = {}) {
   const filter = {

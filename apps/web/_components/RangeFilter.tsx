@@ -2,12 +2,13 @@
 
 import * as Slider from "@radix-ui/react-slider";
 
-export type RangeFilterValue = [number, number];
+export type RangeValue = [number, number];
+
 
 type RangeFilterProps = {
-  value: RangeFilterValue;
-  onValueChange: (value: RangeFilterValue) => void;
-  onValueCommit?: (value: RangeFilterValue) => void;
+  value: RangeValue;
+  onValueChange: (value: RangeValue) => void;
+  onValueCommit?: (value: RangeValue) => void;
   min?: number;
   max?: number;
   step?: number;
@@ -21,15 +22,13 @@ export function RangeFilter({
   max = 300,
   step = 1,
 }: RangeFilterProps) {
-  const toRange = (nextValue: number[]): RangeFilterValue => [
+  const toRange = (nextValue: number[]): RangeValue => [
     nextValue[0] ?? min,
     nextValue[1] ?? max,
   ];
 
   return (
     <section>
-      {/* <h3 className="mb-4 text-xl font-bold">range</h3> */}
-
       <Slider.Root
         className="relative flex h-5 w-full touch-none select-none items-center"
         min={min}

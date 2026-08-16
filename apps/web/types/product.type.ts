@@ -1,3 +1,14 @@
+export interface ProductFilters {
+  q?: string;
+  colorIds?: string[] | undefined;
+  sizeIds?: string[] | undefined;
+  minPrice?: number;
+  maxPrice?: number;
+  limit?: number;
+  offset?: number;
+  sort?: "name" | "price" | "rating" | "createdAt" | undefined;
+  order?: "asc" | "desc" | undefined;
+}
 export interface ProductDetailType {
   id: string;
   name: string;
@@ -16,6 +27,6 @@ export interface ProductDetailType {
 export interface ApplyFilterType {
   minPrice: number;
   maxPrice: number;
-  color: Array<string>;
-  size: Array<string>;
+  colorIds: string[];
+  sizeIds: string[];
 }

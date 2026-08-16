@@ -28,7 +28,7 @@ export function ProductCard(props: ProductCardProps): React.ReactNode {
   };
 
   return (
-    <article className="flex h-101.75 w-full max-w-73.75 flex-col overflow-hidden">
+    <div className="flex h-101.75 w-full max-w-73.75 flex-col overflow-hidden">
       <div className="relative h-74.5 shrink-0 overflow-hidden rounded-[20px] bg-[#f0eeed]">
         <div
           className="relative h-74.5  w-full overflow-hidden rounded-[13.42px] bg-[#f0eeed] bg-cover bg-center bg-no-repeat lg:h-74.5 lg:rounded-[20px]"
@@ -76,6 +76,6 @@ export function ProductCard(props: ProductCardProps): React.ReactNode {
           )}
         </div>
       </div>
-    </article>
+    </div>
   );
 }
