@@ -8,11 +8,30 @@ type ColorPaletteProps = {
   onChange: (colorIds: string[]) => void;
 };
 
+const COLOR_ORDER = new Map([
+  ["red", 0],
+  ["green", 1],
+  ["yellow", 2],
+  ["orange", 3],
+  ["cyan", 4],
+  ["blue", 5],
+  ["purple", 6],
+  ["pink", 7],
+  ["white", 8],
+  ["black", 9],
+]);
+
 export default function ColorPalette({
   colors,
   selectedColorIds,
   onChange,
 }: ColorPaletteProps) {
+  const sortedColors = Array.from(colors).sort(
+    (first, second) =>
+      (COLOR_ORDER.get(first.id) ?? COLOR_ORDER.size) -
+      (COLOR_ORDER.get(second.id) ?? COLOR_ORDER.size),
+  );
+
   const handleSelectColor = (colorId: string) => {
     const isSelected = selectedColorIds.includes(colorId);
 
@@ -24,8 +43,8 @@ export default function ColorPalette({
   };
 
   return (
-    <div className="grid grid-cols-5 gap-3">
-      {colors.map((color) => {
+    <div className="flex flex-wrap gap-1.5 md:grid md:grid-cols-5 md:gap-3">
+      {sortedColors.map((color) => {
         const isSelected = selectedColorIds.includes(color.id);
 
         return (

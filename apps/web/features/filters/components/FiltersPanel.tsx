@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FiSliders } from "react-icons/fi";
+import { FiSliders, FiX } from "react-icons/fi";
 
 import { Collapse } from "@/_components/Collapse";
 import ColorPalette from "@/_components/ColorPalette";
@@ -18,6 +18,8 @@ interface FilterPanelProps {
   sizes: SizeDetail[];
   value: ApplyFilterType;
   onApplyFilter: (filters: ApplyFilterType) => void;
+  onClose?: () => void;
+  className?: string;
 }
 
 export default function FilterPanel({
@@ -25,6 +27,8 @@ export default function FilterPanel({
   sizes,
   value,
   onApplyFilter,
+  onClose,
+  className = "",
 }: FilterPanelProps) {
   const [draftFilters, setDraftFilters] = useState<ApplyFilterType>(() => ({
     ...value,
@@ -61,10 +65,23 @@ export default function FilterPanel({
   };
 
   return (
-    <aside className="flex flex-col gap-6 rounded-[20px] border border-black/10 px-5 pb-6 max-h-max">
-      <div className="flex items-center justify-between border-b border-black/10 py-6">
+    <aside
+      className={`flex max-h-max flex-col rounded-[20px] border border-black/10 px-5 pb-6 ${className}`}
+    >
+      <div className="flex items-center justify-between border-b border-black/10 py-3 md:py-5">
         <h2 className="text-xl font-bold">Filters</h2>
-        <FiSliders className="text-black/40" aria-hidden="true" />
+        {onClose ? (
+          <button
+            type="button"
+            aria-label="Close filters"
+            className="grid size-8 place-items-center text-black/40"
+            onClick={onClose}
+          >
+            <FiX size={24} aria-hidden="true" />
+          </button>
+        ) : (
+          <FiSliders className="text-black/40" aria-hidden="true" />
+        )}
       </div>
 
       <Collapse title="Price">
@@ -115,7 +132,10 @@ export default function FilterPanel({
       <button
         type="button"
         className="w-full rounded-[62px] bg-black p-4 text-sm text-white transition-colors hover:bg-black/80"
-        onClick={handleApplyFilter}
+        onClick={() => {
+          handleApplyFilter();
+          onClose?.();
+        }}
       >
         Apply Filter
       </button>

@@ -18,6 +18,7 @@ import {
 } from "@/features/hooks/useCart";
 import Loading from "@/_components/Loading";
 import { useState } from "react";
+import { FiSliders } from "react-icons/fi";
 export default function CategoryContent() {
   const searchParams = useSearchParams();
   const search = searchParams.get("q")?.trim() || undefined;
@@ -27,6 +28,7 @@ export default function CategoryContent() {
     colorIds: [],
     sizeIds: [],
   });
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const {
     data: colors = [],
     error: colorsError,
@@ -85,7 +87,7 @@ export default function CategoryContent() {
   return (
     <>
       <main className="relative min-h-screen">
-        <div className="mx-auto flex md:w-full lg:max-w-310 justify-center px-4 pt-40">
+        <div className="mx-auto flex justify-center px-4 pt-36 md:w-full md:pt-40 lg:max-w-310">
           {isPagePending && <Loading label="Loading products..." delayMs={0} />}
           {productsError && (
             <p className="py-10 text-center text-red-500">
@@ -100,16 +102,32 @@ export default function CategoryContent() {
             <p className="py-10 text-center">No products found.</p>
           )}
           {!isPending && !productsError && products.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-[295px_1fr] gap-4">
-              <FiltersPanel
-                colors={colors}
-                sizes={sizes}
-                value={appliedFilters}
-                onApplyFilter={handleApplyFilter}
-              />
+            <div className="w-full md:grid md:grid-cols-[295px_1fr] md:gap-4">
+              <div className="hidden md:block">
+                <FiltersPanel
+                  colors={colors}
+                  sizes={sizes}
+                  value={appliedFilters}
+                  onApplyFilter={handleApplyFilter}
+                />
+              </div>
 
-              <div className="grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-3">
-                {products.map((product) => {
+              <section className="min-w-0">
+                <div className="mb-6 flex items-center justify-between md:mb-5">
+                  <h1 className="text-2xl font-bold md:text-3xl">Clothes</h1>
+                  <button
+                    type="button"
+                    aria-label="Open filters"
+                    aria-expanded={isMobileFiltersOpen}
+                    className="grid size-10 place-items-center rounded-full bg-black/5 outline-none focus-visible:ring-2 focus-visible:ring-black md:hidden"
+                    onClick={() => setIsMobileFiltersOpen(true)}
+                  >
+                    <FiSliders size={18} aria-hidden="true" />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-x-4 gap-y-6 lg:grid-cols-3 lg:gap-y-10">
+                  {products.map((product) => {
                   const cartItem = cartItemsByProductId.get(product.id);
 
                   const quantity = cartItem?.quantity ?? 0;
@@ -122,8 +140,8 @@ export default function CategoryContent() {
                     (removeCartItem.isPending &&
                       removeCartItem.variables === cartItem?.id);
 
-                  return (
-                    <ProductCard
+                    return (
+                      <ProductCard
                       key={product.id}
                       product={product}
                       quantity={quantity}
@@ -155,25 +173,54 @@ export default function CategoryContent() {
                           quantity: cartItem.quantity - 1,
                         });
                       }}
+                      />
+                    );
+                  })}
+                  <div className="col-span-full">
+                    <InfiniteScrollTrigger
+                      hasMore={Boolean(hasNextPage)}
+                      isLoading={isFetchingNextPage}
+                      onLoadMore={handleLoadMore}
                     />
-                  );
-                })}
-                <InfiniteScrollTrigger
-                  hasMore={Boolean(hasNextPage)}
-                  isLoading={isFetchingNextPage}
-                  onLoadMore={handleLoadMore}
-                />
+                  </div>
 
-                {!hasNextPage && (
-                  <p className="py-8 text-center text-sm text-black/50">
-                    You have reached the end.
-                  </p>
-                )}
-              </div>
+                  {!hasNextPage && (
+                    <p className="col-span-full py-8 text-center text-sm text-black/50">
+                      You have reached the end.
+                    </p>
+                  )}
+                </div>
+              </section>
             </div>
           )}
         </div>
       </main>
+
+      {isMobileFiltersOpen && (
+        <div className="md:hidden">
+          <button
+            type="button"
+            aria-label="Close filters"
+            className="fixed inset-0 z-110 bg-black/40"
+            onClick={() => setIsMobileFiltersOpen(false)}
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Product filters"
+            className="fixed inset-x-0 bottom-0 z-120 max-h-[82vh] overflow-y-auto rounded-t-[20px] bg-white"
+          >
+            <FiltersPanel
+              colors={colors}
+              sizes={sizes}
+              value={appliedFilters}
+              onApplyFilter={handleApplyFilter}
+              onClose={() => setIsMobileFiltersOpen(false)}
+              className="rounded-none border-0"
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }

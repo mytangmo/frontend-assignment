@@ -38,10 +38,10 @@ export function ProductCard(props: ProductCardProps): React.ReactNode {
   };
 
   return (
-    <div className="flex h-101.75 w-full max-w-73.75 flex-col overflow-hidden">
-      <div className="relative h-74.5 shrink-0 overflow-hidden rounded-[20px] bg-[#f0eeed]">
+    <article className="flex w-full min-w-0 flex-col lg:h-101.75 lg:max-w-73.75">
+      <div className="relative h-43.5 shrink-0 overflow-hidden rounded-[13.42px] bg-[#f0eeed] lg:h-74.5 lg:rounded-[20px]">
         <div
-          className="relative h-74.5  w-full overflow-hidden rounded-[13.42px] bg-[#f0eeed] bg-cover bg-center bg-no-repeat lg:h-74.5 lg:rounded-[20px]"
+          className="relative h-full w-full overflow-hidden rounded-[13.42px] bg-[#f0eeed] bg-contain bg-center bg-no-repeat lg:rounded-[20px]"
           style={{
             backgroundImage: `url("${product.imageUrl}")`,
           }}
@@ -60,31 +60,33 @@ export function ProductCard(props: ProductCardProps): React.ReactNode {
         </div>
       </div>
 
-      <div className="min-h-0 pt-3 gap-1.5 flex flex-col">
-        <h3 className="truncate text-xl font-bold">{product.name}</h3>
-        <div className="mt-1 flex items-center gap-2">
-          <ProductRating rating={product.rating} />
+      <div className="flex min-h-0 flex-col gap-1 pt-2.5 lg:gap-1.5 lg:pt-3">
+        <h3 className="truncate text-base font-bold lg:text-xl">
+          {product.name}
+        </h3>
+        <div className="flex items-center gap-1 lg:mt-1 lg:gap-2">
+          <ProductRating rating={product.rating} size={16} />
         </div>
-        <div className="gap-2.5 flex align-middle ">
-          <div className="text-2xl font-bold">
+        <div className="flex items-center gap-1.5 lg:gap-2.5">
+          <div className="text-xl font-bold lg:text-2xl">
             {handleDisplayPrice(product.discountedPrice)}
           </div>
           {!product.discountedPrice ||
           product.price === product.discountedPrice ? null : (
-            <div className="text-2xl font-bold text-[rgba(0,0,0,0.4)]">
+            <div className="text-xl font-bold text-black/40 lg:text-2xl  line-through">
               {handleDisplayPrice(product.price)}
             </div>
           )}
 
           {!product.percentageDiscount ? null : (
-            <div className="flex align-middle justify-center py-1.5 px-3.5 bg-[#FF33331A] rounded-[62px] text-xs ">
-              <div className=" flex align-middle justify-center text-[#FF3333]">
+            <div className="flex shrink-0 items-center justify-center rounded-[62px] bg-[#FF33331A] px-2 py-1 text-[10px] lg:px-3.5 lg:py-1.5 lg:text-xs">
+              <div className="flex items-center justify-center text-[#FF3333]">
                 {handleDisplayPercent(product.percentageDiscount)}
               </div>
             </div>
           )}
         </div>
       </div>
-    </div>
+    </article>
   );
 }

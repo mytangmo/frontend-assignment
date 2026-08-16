@@ -4,7 +4,8 @@ import { useCart } from "@/features/hooks/useCart";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
-import { FiMenu, FiSearch, FiShoppingCart, FiUser, FiX } from "react-icons/fi";
+import { FiMenu, FiSearch, FiShoppingCart, FiX } from "react-icons/fi";
+import { HiOutlineUserCircle } from "react-icons/hi2";
 
 type HeaderProps = {
   cartItemCount?: number;
@@ -45,7 +46,7 @@ export function Header({ cartItemCount }: HeaderProps) {
           <button
             type="button"
             aria-label="Close promotion"
-            className="absolute right-4 grid size-8 place-items-center"
+            className="absolute right-4 hidden size-8 place-items-center sm:grid"
             onClick={() => setShowPromotion(false)}
           >
             <FiX size={20} aria-hidden="true" />
@@ -55,7 +56,7 @@ export function Header({ cartItemCount }: HeaderProps) {
 
       <div className="mx-auto max-w-310 px-4">
         <nav
-          className="flex h-20 items-center gap-3 border-b border-gray-200"
+          className="flex h-16 items-center gap-3 border-b border-gray-200 md:h-20"
           aria-label="Main navigation"
         >
           <button
@@ -127,7 +128,7 @@ export function Header({ cartItemCount }: HeaderProps) {
               aria-label="User account"
               className="grid size-10 place-items-center"
             >
-              <FiUser size={22} aria-hidden="true" />
+              <HiOutlineUserCircle size={25} aria-hidden="true" />
             </button>
           </div>
         </nav>

@@ -54,7 +54,8 @@ export default function Tag(props: TagProps) {
       className={`
         inline-flex items-center justify-center
         px-5 py-2.5 text-sm font-normal
-        transition-colors
+        outline-none transition-colors focus-visible:ring-2
+        focus-visible:ring-black focus-visible:ring-offset-2
         ${DEFAULT_TAG_STYLE[status][variant]}
         ${rounded ? "rounded-full" : "rounded"}
         ${className}

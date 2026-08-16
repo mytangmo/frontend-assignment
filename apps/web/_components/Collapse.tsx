@@ -20,7 +20,9 @@ export function Collapse({
   const contentId = useId();
 
   return (
-    <section className={`border-b border-black/10 py-5 ${className}`}>
+    <section
+      className={`border-b border-black/10 py-2 md:py-5 ${className}`}
+    >
       <button
         type="button"
         className="flex w-full items-center justify-between text-left"
@@ -42,7 +44,7 @@ export function Collapse({
         id={contentId}
         className={`grid transition-all duration-200 ease-in-out ${
           isOpen
-            ? "mt-5 grid-rows-[1fr] opacity-100"
+            ? "mt-2 grid-rows-[1fr] opacity-100 md:mt-5"
             : "grid-rows-[0fr] opacity-0"
         }`}
       >

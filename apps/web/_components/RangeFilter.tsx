@@ -28,7 +28,7 @@ export function RangeFilter({
   ];
 
   return (
-    <section>
+    <section className="px-7 md:px-0">
       <Slider.Root
         className="relative flex h-5 w-full touch-none select-none items-center"
         min={min}
