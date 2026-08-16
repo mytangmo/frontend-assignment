@@ -69,6 +69,9 @@ export default function CategoryContent() {
   const updateCartItem = useUpdateCartItem();
   const removeCartItem = useRemoveCartItem();
 
+  const cartMutationError =
+    addCartItem.error ?? updateCartItem.error ?? removeCartItem.error;
+
   const handleLoadMore = () => {
     void fetchNextPage();
   };
@@ -113,6 +116,11 @@ export default function CategoryContent() {
               </div>
 
               <section className="min-w-0">
+                {cartMutationError && (
+                  <p role="alert" className="mb-4 text-sm text-red-500">
+                    Unable to update cart. Please try again.
+                  </p>
+                )}
                 <div className="mb-6 flex items-center justify-between md:mb-5">
                   <h1 className="text-2xl font-bold md:text-3xl">Clothes</h1>
                   <button
@@ -128,51 +136,51 @@ export default function CategoryContent() {
 
                 <div className="grid grid-cols-2 gap-x-4 gap-y-6 lg:grid-cols-3 lg:gap-y-10">
                   {products.map((product) => {
-                  const cartItem = cartItemsByProductId.get(product.id);
+                    const cartItem = cartItemsByProductId.get(product.id);
 
-                  const quantity = cartItem?.quantity ?? 0;
+                    const quantity = cartItem?.quantity ?? 0;
 
-                  const isUpdating =
-                    (addCartItem.isPending &&
-                      addCartItem.variables?.productId === product.id) ||
-                    (updateCartItem.isPending &&
-                      updateCartItem.variables?.itemId === cartItem?.id) ||
-                    (removeCartItem.isPending &&
-                      removeCartItem.variables === cartItem?.id);
+                    const isUpdating =
+                      (addCartItem.isPending &&
+                        addCartItem.variables?.productId === product.id) ||
+                      (updateCartItem.isPending &&
+                        updateCartItem.variables?.itemId === cartItem?.id) ||
+                      (removeCartItem.isPending &&
+                        removeCartItem.variables === cartItem?.id);
 
                     return (
                       <ProductCard
-                      key={product.id}
-                      product={product}
-                      quantity={quantity}
-                      disabled={isUpdating}
-                      onAdd={() => {
-                        addCartItem.mutate({
-                          productId: product.id,
-                          quantity: 1,
-                        });
-                      }}
-                      onIncrease={() => {
-                        if (!cartItem) return;
+                        key={product.id}
+                        product={product}
+                        quantity={quantity}
+                        disabled={isUpdating}
+                        onAdd={() => {
+                          addCartItem.mutate({
+                            productId: product.id,
+                            quantity: 1,
+                          });
+                        }}
+                        onIncrease={() => {
+                          if (!cartItem) return;
 
-                        updateCartItem.mutate({
-                          itemId: cartItem.id,
-                          quantity: Math.min(cartItem.quantity + 1, 99),
-                        });
-                      }}
-                      onDecrease={() => {
-                        if (!cartItem) return;
+                          updateCartItem.mutate({
+                            itemId: cartItem.id,
+                            quantity: Math.min(cartItem.quantity + 1, 99),
+                          });
+                        }}
+                        onDecrease={() => {
+                          if (!cartItem) return;
 
-                        if (cartItem.quantity === 1) {
-                          removeCartItem.mutate(cartItem.id);
-                          return;
-                        }
+                          if (cartItem.quantity === 1) {
+                            removeCartItem.mutate(cartItem.id);
+                            return;
+                          }
 
-                        updateCartItem.mutate({
-                          itemId: cartItem.id,
-                          quantity: cartItem.quantity - 1,
-                        });
-                      }}
+                          updateCartItem.mutate({
+                            itemId: cartItem.id,
+                            quantity: cartItem.quantity - 1,
+                          });
+                        }}
                       />
                     );
                   })}
