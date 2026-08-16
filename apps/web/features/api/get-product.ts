@@ -8,6 +8,8 @@ export type ProductFilters = {
   maxPrice?: number;
   limit?: number;
   offset?: number;
+  sort?: "name" | "price" | "rating" | "createdAt" | undefined;
+  order?: "asc" | "desc" | undefined;
 };
 
 export async function getProducts(filters: ProductFilters = {}) {

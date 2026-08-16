@@ -12,3 +12,10 @@ export interface ProductDetailType {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ApplyFilterType {
+  minPrice: number;
+  maxPrice: number;
+  color: Array<string>;
+  size: Array<string>;
+}
