@@ -11,7 +11,7 @@ export type ProductFilters = {
 };
 
 export async function getProducts(filters: ProductFilters = {}) {
-  const { data, error } = await api.products.get({
+  const filter = {
     query: {
       q: filters.q || undefined,
       colorIds: filters.colorIds,
@@ -21,7 +21,10 @@ export async function getProducts(filters: ProductFilters = {}) {
       limit: filters.limit ?? 20,
       offset: filters.offset ?? 0,
     },
-  });
+  };
+  const { data, error } = await api.products.get(filter);
+
+  console.log("data", data);
 
   if (error) {
     throw new Error("Unable to load products");
