@@ -2,15 +2,16 @@
 
 import { useCart } from "@/features/hooks/useCart";
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { type FormEvent, useState } from "react";
 import { FiMenu, FiSearch, FiShoppingCart, FiUser, FiX } from "react-icons/fi";
 
 type HeaderProps = {
   cartItemCount?: number;
-  onSearch?: (value: string) => void;
 };
 
-export function Header({ cartItemCount, onSearch }: HeaderProps) {
+export function Header({ cartItemCount }: HeaderProps) {
+  const router = useRouter();
   const { data: cart } = useCart();
 
   const displayedCartItemCount = cartItemCount ?? cart?.totalItems ?? 0;
@@ -20,7 +21,14 @@ export function Header({ cartItemCount, onSearch }: HeaderProps) {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onSearch?.(search.trim());
+
+    const query = search.trim();
+    const destination = query
+      ? `/catalog?q=${encodeURIComponent(query)}`
+      : "/catalog";
+
+    router.push(destination);
+    setShowMobileSearch(false);
   };
 
   return (
